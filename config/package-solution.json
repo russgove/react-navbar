@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "name": "react-navbar-client-side-solution",
+    "id": "4ed13771-2f21-4ce2-95b1-34aa1be54377",
+    "version": "1.0.0.0"
+  },
+  "paths": {
+    "zippedPackage": "solution/react-navbar.sppkg"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "entry": "./lib/webparts/reactNavbar/ReactNavbarWebPart.js",
+      "manifest": "./src/webparts/reactNavbar/ReactNavbarWebPart.manifest.json",
+      "outputPath": "./dist/react-navbar.bundle.js"
+    }
+  ],
+  "externals": {},
+  "localizedResources": {
+    "reactNavbarStrings": "webparts/reactNavbar/loc/{locale}.js"
+  }
+}

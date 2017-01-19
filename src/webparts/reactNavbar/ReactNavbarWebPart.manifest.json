@@ -1,0 +1,20 @@
+{
+  "$schema": "../../../node_modules/@microsoft/sp-module-interfaces/lib/manifestSchemas/jsonSchemas/clientSideComponentManifestSchema.json",
+
+  "id": "9b5c7d76-a1f7-4add-8f4b-268978ad26fa",
+  "alias": "ReactNavbarWebPart",
+  "componentType": "WebPart",
+  "version": "0.0.1",
+  "manifestVersion": 2,
+
+  "preconfiguredEntries": [{
+    "groupId": "9b5c7d76-a1f7-4add-8f4b-268978ad26fa",
+    "group": { "default": "Under Development" },
+    "title": { "default": "react-navbar" },
+    "description": { "default": "react-navbar description" },
+    "officeFabricIconFontName": "Page",
+    "properties": {
+      "description": "react-navbar"
+    }
+  }]
+}
