@@ -17,9 +17,9 @@ import { IReactNavbarWebPartProps } from './IReactNavbarWebPartProps';
 export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavbarWebPartProps> {
   /* gets a property from an item in the seacrh results */
   public getProperty(site, propertyName) {
-    for (var propidx = 0; propidx < site.Cells.length; propidx++) {
-      if (site.Cells[propidx].Key === propertyName) {
-        return site.Cells[propidx].Value
+    for (const cell of site.Cells) {
+      if (cell.Key === propertyName) {
+        return cell.Value
       }
     }
   };
@@ -39,14 +39,6 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
       );
     });
     return roots;
-    // var subwebs = [];
-    // for (var subwebidx = 0; subwebidx < sites.length; subwebidx++) {
-    //   var thisParent = this.getProperty(sites[subwebidx], "ParentLink");
-    //   if (thisParent === parentLink) {
-    //     subwebs.push(sites[subwebidx]);
-    //   }
-    // }
-    // return subwebs;
   };
   /* fill in child ndes for a site */
   private fillSubsites = function (sites: pnp.SearchResults, site: NavNode, level: number) {
