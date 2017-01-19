@@ -16,9 +16,9 @@ import { IReactNavbarWebPartProps } from './IReactNavbarWebPartProps';
 export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavbarWebPartProps> {
   /* gets a property from an item in the seacrh results */
   public getProperty(site, propertyName) {
-    for (var propidx = 0; propidx < site.Cells.results.length; propidx++) {
-      if (site.Cells.results[propidx].Key === propertyName) {
-        return site.Cells.results[propidx].Value
+    for (var propidx = 0; propidx < site.Cells.length; propidx++) {
+      if (site.Cells[propidx].Key === propertyName) {
+        return site.Cells[propidx].Value
       }
     }
   };
@@ -45,38 +45,37 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
     }
   };
   public convertsitesToTree(sites): any {
-    const rootTree = this.findSubWebsForWeb(sites, this.context.pageContext.site.absoluteUrl);
-    for (var i = 0; i < rootTree.length; i++) {
-      this.fillSubsites(sites, rootTree[i], 1)
+    const rootNodes = this.findSubWebsForWeb(sites, this.context.pageContext.site.absoluteUrl);
+    for (var i = 0; i < rootNodes.length; i++) {
+      this.fillSubsites(sites, rootNodes[i], 1)
     }
-    return rootTree;
+    return rootNodes;
   }
   public getNavNodes(): Promise<any> {
     const root = this.context.pageContext.site.absoluteUrl;
     const queryText = "'contentClass=\"STS_Web\"+path:" + root + "'&trimduplicates=false&rowlimit=300&selectProperties='Title,Path,Description,ParentLink'&SortList='refinablestring00:ascending'";
     let query: pnp.SearchQuery = {
-      //  "Querytext": "contentClass=\"STS_Web\"+path:\"" + root + "\"",
-         "Querytext": "contentClass=\"STS_Web\"",
-        "TrimDuplicates": false,
-        "RowLimit": 300,
-        "SelectProperties": [
-            "Title, Path, Description,ParentLink",
-        ],
+      "Querytext": "contentClass=\"STS_Web\"+path:\"" + root + "\"",
+      "TrimDuplicates": false,
+      "RowLimit": 300,
+      "SelectProperties": [
+        "Title", "Path", "Description", "ParentLink",
+      ],
 
-        "SortList":
-        [
-            {
-                "Property": "refinablestring00",
-                "Direction": pnp.SortDirection.Ascending
-            },
+      "SortList":
+      [
+        {
+          "Property": "refinablestring00",
+          "Direction": pnp.SortDirection.Ascending
+        },
 
-        ],
+      ],
 
 
 
     };
-    return pnp.sp.search(queryText).then(results => {
-      const tree = this.convertsitesToTree(results.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows.results);
+    return pnp.sp.search(query).then(results => {
+      const tree = this.convertsitesToTree(results.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows);
       debugger;
     });
   }
