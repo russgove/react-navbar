@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import * as pnp from 'sp-pnp-js';
+import NavNode from "./NavNode";
 import { Version } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
@@ -23,31 +24,42 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
     }
   };
   /* create update global Nav witgh the search results */
-  private findSubWebsForWeb(sites, parentLink) {
-    var subwebs = [];
-    for (var subwebidx = 0; subwebidx < sites.length; subwebidx++) {
-      var thisParent = this.getProperty(sites[subwebidx], "ParentLink");
-      if (thisParent === parentLink) {
-        subwebs.push(sites[subwebidx]);
-      }
-    }
-    return subwebs;
+  private findSubWebsForWeb(sites: Array<pnp.SearchResult>, parentLink) {
+    var roots = sites.filter((site: pnp.SearchResult) => {
+      var thisParent = this.getProperty(site, "ParentLink");
+      return (thisParent === parentLink);
+    }).map((node: pnp.SearchResult) => {
+      return new NavNode(
+        this.getProperty(node, "Path"), // using path as Id for now
+        this.getProperty(node, "Title"),
+        this.getProperty(node, "Path"),
+        parentLink,
+        this.getProperty(node, "Description"),
+
+      );
+    });
+    return roots;
+    // var subwebs = [];
+    // for (var subwebidx = 0; subwebidx < sites.length; subwebidx++) {
+    //   var thisParent = this.getProperty(sites[subwebidx], "ParentLink");
+    //   if (thisParent === parentLink) {
+    //     subwebs.push(sites[subwebidx]);
+    //   }
+    // }
+    // return subwebs;
   };
   /* fill in child ndes for a site */
-  private fillSubsites = function (sites, site, level) {
+  private fillSubsites = function (sites: pnp.SearchResults, site: NavNode, level: number) {
 
-    var siteName = this.getProperty(site, "Title");
-    var siteUrl = this.getProperty(site, "Path");
-    site.subwebs = this.findSubWebsForWeb(sites, siteUrl);
-
-    for (var webidx = 0; webidx < site.subwebs.length; webidx++) {
-      this.fillSubsites(sites, site.subwebs[webidx], level + 1)
+    site.subwebs = this.findSubWebsForWeb(sites, site.path);
+    for (let subweb of site.subwebs) {
+      this.fillSubsites(sites, subweb, level + 1)
     }
   };
   public convertsitesToTree(sites): any {
     const rootNodes = this.findSubWebsForWeb(sites, this.context.pageContext.site.absoluteUrl);
-    for (var i = 0; i < rootNodes.length; i++) {
-      this.fillSubsites(sites, rootNodes[i], 1)
+    for (const rootNode of rootNodes) {
+      this.fillSubsites(sites, rootNode, 1)
     }
     return rootNodes;
   }
@@ -70,9 +82,6 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
         },
 
       ],
-
-
-
     };
     return pnp.sp.search(query).then(results => {
       const tree = this.convertsitesToTree(results.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows);
