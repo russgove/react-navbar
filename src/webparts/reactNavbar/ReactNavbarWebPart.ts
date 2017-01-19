@@ -54,6 +54,27 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
   public getNavNodes(): Promise<any> {
     const root = this.context.pageContext.site.absoluteUrl;
     const queryText = "'contentClass=\"STS_Web\"+path:" + root + "'&trimduplicates=false&rowlimit=300&selectProperties='Title,Path,Description,ParentLink'&SortList='refinablestring00:ascending'";
+    let query: pnp.SearchQuery = {
+      //  "Querytext": "contentClass=\"STS_Web\"+path:\"" + root + "\"",
+         "Querytext": "contentClass=\"STS_Web\"",
+        "TrimDuplicates": false,
+        "RowLimit": 300,
+        "SelectProperties": [
+            "Title, Path, Description,ParentLink",
+        ],
+
+        "SortList":
+        [
+            {
+                "Property": "refinablestring00",
+                "Direction": pnp.SortDirection.Ascending
+            },
+
+        ],
+
+
+
+    };
     return pnp.sp.search(queryText).then(results => {
       const tree = this.convertsitesToTree(results.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows.results);
       debugger;
