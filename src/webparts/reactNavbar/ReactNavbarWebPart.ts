@@ -69,7 +69,7 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
       "SortList":
       [
         {
-          "Property": "refinablestring00",
+          "Property": "refinablestring00", // need to map Title to refinablestring00 and make it sortable
           "Direction": pnp.SortDirection.Ascending
         },
 
