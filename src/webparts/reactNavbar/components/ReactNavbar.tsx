@@ -9,10 +9,10 @@ import styles from './ReactNavbar.module.scss';
 import { IReactNavbarProps } from './IReactNavbarProps';
 
 export default class ReactNavbar extends React.Component<IReactNavbarProps, void> {
-  groups: Array<INavLinkGroup>;
-  links: Array<INavLink>;
-  menuitems: Array<IContextualMenuItem>;
-  cbprops: ICommandBarProps;
+  private groups: Array<INavLinkGroup>;
+  private links: Array<INavLink>;
+  private menuitems: Array<IContextualMenuItem>;
+  private cbprops: ICommandBarProps;
   public render(): React.ReactElement<IReactNavbarProps> {
     this.links = [{
       name: 'Hi',

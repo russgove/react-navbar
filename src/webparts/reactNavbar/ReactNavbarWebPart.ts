@@ -15,11 +15,12 @@ import { IReactNavbarProps } from './components/IReactNavbarProps';
 import { IReactNavbarWebPartProps } from './IReactNavbarWebPartProps';
 
 export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavbarWebPartProps> {
+  private navNodes:Array<NavNode>;
   /* gets a property from an item in the seacrh results */
   public getProperty(site, propertyName) {
     for (const cell of site.Cells) {
       if (cell.Key === propertyName) {
-        return cell.Value
+        return cell.Value;
       }
     }
   };
@@ -44,21 +45,21 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
   private fillSubsites = function (sites: pnp.SearchResults, site: NavNode, level: number) {
 
     site.subwebs = this.findSubWebsForWeb(sites, site.path);
-    for (let subweb of site.subwebs) {
-      this.fillSubsites(sites, subweb, level + 1)
+    for (const subweb of site.subwebs) {
+      this.fillSubsites(sites, subweb, level + 1);
     }
   };
   public convertsitesToTree(sites): any {
     const rootNodes = this.findSubWebsForWeb(sites, this.context.pageContext.site.absoluteUrl);
     for (const rootNode of rootNodes) {
-      this.fillSubsites(sites, rootNode, 1)
+      this.fillSubsites(sites, rootNode, 1);
     }
     return rootNodes;
   }
-  public getNavNodes(): Promise<any> {
+  public getNavNodes(): Promise<Array<NavNode>> {
     const root = this.context.pageContext.site.absoluteUrl;
-    const queryText = "'contentClass=\"STS_Web\"+path:" + root + "'&trimduplicates=false&rowlimit=300&selectProperties='Title,Path,Description,ParentLink'&SortList='refinablestring00:ascending'";
-    let query: pnp.SearchQuery = {
+    // const queryText = "'contentClass=\"STS_Web\"+path:" + root + "'&trimduplicates=false&rowlimit=300&selectProperties='Title,Path,Description,ParentLink'&SortList='refinablestring00:ascending'";
+    const query: pnp.SearchQuery = {
       "Querytext": "contentClass=\"STS_Web\"+path:\"" + root + "\"",
       "TrimDuplicates": false,
       "RowLimit": 300,
@@ -76,17 +77,21 @@ export default class ReactNavbarWebPart extends BaseClientSideWebPart<IReactNavb
       ],
     };
     return pnp.sp.search(query).then(results => {
-      const tree = this.convertsitesToTree(results.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows);
-      debugger;
+      return this.convertsitesToTree(results.RawSearchResults.PrimaryQueryResult.RelevantResults.Table.Rows);
+     
     });
   }
   public render(): void {
     debugger;
-    const navNodes = this.getNavNodes();
+    this.getNavNodes().then((nodes)=>{
+      this.navNodes=nodes;
+    });
     const element: React.ReactElement<IReactNavbarProps> = React.createElement(
       ReactNavbar,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        navNodes:this.navNodes
+        
       }
     );
 

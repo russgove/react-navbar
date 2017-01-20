@@ -1,6 +1,6 @@
 export default class NavNode {
-    subwebs: Array<NavNode>;
-    level:number;
+    public subwebs: Array<NavNode>;
+   public level:number;
     constructor(
         public id: string,
         public title: string,
